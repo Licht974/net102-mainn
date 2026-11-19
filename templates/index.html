@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101827">
+    <title>Router Diagnostics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="{{ url_for('home') }}">
+          <span class="brand-mark" aria-hidden="true">N</span>
+          <span>Network Console</span>
+        </a>
+        <span class="topbar-label">Device tools</span>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="page-title">
+          <p class="eyebrow">NETWORK OPERATIONS</p>
+          <h1 id="page-title">Router diagnostics</h1>
+          <p class="intro-copy">
+            Connect to the configured router and collect its current status.
+          </p>
+        </section>
+
+        <section class="connect-card" aria-labelledby="connect-title">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3.5" y="5" width="17" height="6" rx="1.5"></rect>
+              <rect x="3.5" y="13" width="17" height="6" rx="1.5"></rect>
+              <path d="M7 8h.01M7 16h.01M11 8h6M11 16h6"></path>
+            </svg>
+          </div>
+          <div class="connect-copy">
+            <h2 id="connect-title">Run device checks</h2>
+            <p>Runs the configured read-only IOS status commands.</p>
+          </div>
+          <form method="post" action="{{ url_for('connect') }}">
+            <button class="primary-button" type="submit">
+              Connect and run
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </form>
+        </section>
+
+        {% if error %}
+          <section class="notice notice-error" role="alert">
+            <span class="notice-indicator" aria-hidden="true"></span>
+            <div>
+              <h2>Connection failed</h2>
+              <p>{{ error }}</p>
+            </div>
+          </section>
+        {% endif %}
+
+        {% if results %}
+          <section class="results" aria-labelledby="results-title">
+            <div class="results-heading">
+              <div>
+                <p class="eyebrow">DIAGNOSTICS</p>
+                <h2 id="results-title">Command output</h2>
+              </div>
+              <span class="result-count">
+                {{ results|length }} {{ "check" if results|length == 1 else "checks" }}
+              </span>
+            </div>
+
+            {% for command, output in results.items() %}
+              <article class="output-card">
+                <header class="output-heading">
+                  <h3>{{ command }}</h3>
+                  <span class="success-label">
+                    <span aria-hidden="true"></span>
+                    Complete
+                  </span>
+                </header>
+                <pre><code>{{ output }}</code></pre>
+              </article>
+            {% endfor %}
+          </section>
+        {% endif %}
+      </main>
+
+      <footer class="footer">
+        <span>Network Console</span>
+        <span>Router diagnostics</span>
+      </footer>
+    </div>
+  </body>
+</html>
